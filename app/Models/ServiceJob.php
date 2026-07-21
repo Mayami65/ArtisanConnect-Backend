@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['client_id', 'title', 'description', 'category', 'budget', 'location', 'status', 'image_path', 'latitude', 'longitude'])]
+#[Fillable(['client_id', 'title', 'description', 'category', 'budget', 'location', 'status', 'images', 'latitude', 'longitude'])]
 class ServiceJob extends Model
 {
     use SoftDeletes;
     protected $appends = ['distance_in_km'];
+    protected $casts = [
+        'images' => 'array',
+    ];
 
     public function getDistanceInKmAttribute()
     {

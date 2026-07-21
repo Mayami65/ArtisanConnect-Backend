@@ -69,12 +69,15 @@ class ServiceJobController extends Controller
             'category' => 'required|string',
             'budget' => 'required|numeric',
             'location' => 'required|string',
-            'image' => 'nullable|image|max:2048', // 2MB Max
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:2048', // 2MB Max per image
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('jobs', 'public');
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('jobs', 'public');
+            }
         }
 
         $job = ServiceJob::create([
@@ -84,7 +87,7 @@ class ServiceJobController extends Controller
             'category' => $validated['category'],
             'budget' => $validated['budget'],
             'location' => $validated['location'],
-            'image_path' => $imagePath,
+            'images' => empty($imagePaths) ? null : $imagePaths,
             'status' => 'pending',
         ]);
 
@@ -123,12 +126,19 @@ class ServiceJobController extends Controller
             'category' => 'required|string',
             'budget' => 'required|numeric',
             'location' => 'required|string',
-            'image' => 'nullable|image|max:2048', // 2MB Max
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:2048', // 2MB Max per image
         ]);
 
-        $imagePath = $serviceJob->image_path;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('jobs', 'public');
+        $imagePaths = $serviceJob->images ?? [];
+        if ($request->hasFile('images')) {
+            $newImagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $newImagePaths[] = $image->store('jobs', 'public');
+            }
+            // Overwrite images if new ones are uploaded (simple approach)
+            // or we could append. For simplicity, let's overwrite if images array is provided.
+            $imagePaths = $newImagePaths;
         }
 
         $serviceJob->update([
@@ -137,7 +147,7 @@ class ServiceJobController extends Controller
             'category' => $validated['category'],
             'budget' => $validated['budget'],
             'location' => $validated['location'],
-            'image_path' => $imagePath,
+            'images' => empty($imagePaths) ? null : $imagePaths,
         ]);
 
         return response()->json($serviceJob);

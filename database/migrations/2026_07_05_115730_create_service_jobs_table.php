@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->string('title');
-            $table->text('description');
-            $table->string('category');
-            $table->decimal('budget', 10, 2);
-            $table->string('location');
-            $table->string('status')->default('pending');
-            $table->string('image_path')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('service_jobs')) {
+            Schema::create('service_jobs', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
+                $table->string('title');
+                $table->text('description');
+                $table->string('category');
+                $table->decimal('budget', 10, 2);
+                $table->string('location');
+                $table->string('status')->default('pending');
+                $table->string('image_path')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
