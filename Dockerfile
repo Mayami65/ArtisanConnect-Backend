@@ -12,14 +12,14 @@ RUN apt-get update && apt-get install -y postgresql-client \
 WORKDIR /var/www/html
 
 # Copy application files
-COPY --chown=webuser:webgroup . /var/www/html
+COPY --chown=www-data:www-data . /var/www/html
 
 # Copy the start script to the entrypoint directory so it runs automatically
 COPY --chown=root:root start.sh /etc/entrypoint.d/99-deploy.sh
 RUN chmod +x /etc/entrypoint.d/99-deploy.sh
 
-# Switch back to webuser
-USER webuser
+# Switch back to www-data
+USER www-data
 
 # Install PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
