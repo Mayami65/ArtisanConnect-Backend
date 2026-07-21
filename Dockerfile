@@ -1,4 +1,4 @@
-FROM serversideup/php:8.2-fpm-nginx
+FROM serversideup/php:8.3-fpm-nginx
 
 # Switch to root to install dependencies and configure permissions
 USER root
