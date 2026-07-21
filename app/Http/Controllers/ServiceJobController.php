@@ -126,19 +126,17 @@ class ServiceJobController extends Controller
             'category' => 'required|string',
             'budget' => 'required|numeric',
             'location' => 'required|string',
+            'existing_images' => 'nullable|array',
+            'existing_images.*' => 'string',
             'images' => 'nullable|array',
             'images.*' => 'image|max:2048', // 2MB Max per image
         ]);
 
-        $imagePaths = $serviceJob->images ?? [];
+        $imagePaths = $validated['existing_images'] ?? [];
         if ($request->hasFile('images')) {
-            $newImagePaths = [];
             foreach ($request->file('images') as $image) {
-                $newImagePaths[] = $image->store('jobs', 'public');
+                $imagePaths[] = $image->store('jobs', 'public');
             }
-            // Overwrite images if new ones are uploaded (simple approach)
-            // or we could append. For simplicity, let's overwrite if images array is provided.
-            $imagePaths = $newImagePaths;
         }
 
         $serviceJob->update([
