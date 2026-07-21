@@ -18,6 +18,10 @@ class ApplicationController extends Controller
             return response()->json(['message' => 'Only artisans can apply'], 403);
         }
 
+        if ($request->user()->id === $serviceJob->client_id) {
+            return response()->json(['message' => 'You cannot apply for your own job'], 403);
+        }
+
         // Prevent duplicate applications
         if (Application::query()->where('service_job_id', $serviceJob->id)->where('artisan_id', $request->user()->id)->exists()) {
             return response()->json(['message' => 'You have already applied for this job'], 400);

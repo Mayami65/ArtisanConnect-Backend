@@ -9,7 +9,14 @@ class ServiceJobController extends Controller
 {
     public function index(Request $request)
     {
-        $jobs = ServiceJob::with('client')->latest()->get();
+        $user = $request->user('sanctum') ?? $request->user();
+        $query = ServiceJob::with('client')->where('status', 'pending');
+
+        if ($user) {
+            $query->where('client_id', '!=', $user->id);
+        }
+
+        $jobs = $query->latest()->get();
 
         if ($request->has('lat') && $request->has('lng')) {
             $userLat = (float) $request->input('lat');
