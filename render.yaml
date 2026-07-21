@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: artisanconnect-backend
+    env: docker
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: APP_NAME
+        value: ArtisanConnect
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://artisanconnect-backend.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: artisanconnect-db
+          property: connectionString
+      # Let Render inject the base64 app key manually, or use a sync: false
+      - key: APP_KEY
+        sync: false
+      - key: FIREBASE_CREDENTIALS_JSON
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+
+databases:
+  - name: artisanconnect-db
+    databaseName: artisanconnect
+    user: artisan
+    plan: free
+    region: frankfurt
