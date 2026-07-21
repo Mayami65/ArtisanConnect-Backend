@@ -19,9 +19,10 @@ services:
         fromDatabase:
           name: artisanconnect-db
           property: connectionString
-      # Let Render inject the base64 app key manually, or use a sync: false
       - key: APP_KEY
-        sync: false
+        value: base64:ckt0WMZ6+9y3LAkf8ziBez3Vr3V5cHqgsChMl9dUjys=
+      - key: FIREBASE_CREDENTIALS
+        value: firebase-credentials.json
       - key: FIREBASE_CREDENTIALS_JSON
         sync: false
       - key: LOG_CHANNEL
