@@ -18,15 +18,17 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($clients as $clientData) {
-            User::create([
-                'name' => $clientData['name'],
-                'email' => $clientData['email'],
-                'password' => Hash::make('password'),
-                'role' => 'client',
-                'phone' => $clientData['phone'],
-                'latitude' => $clientData['latitude'],
-                'longitude' => $clientData['longitude'],
-            ]);
+            User::firstOrCreate(
+                ['email' => $clientData['email']],
+                [
+                    'name' => $clientData['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'client',
+                    'phone' => $clientData['phone'],
+                    'latitude' => $clientData['latitude'],
+                    'longitude' => $clientData['longitude'],
+                ]
+            );
         }
 
         // 5 Artisans
@@ -39,18 +41,20 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($artisans as $artisanData) {
-            User::create([
-                'name' => $artisanData['name'],
-                'email' => $artisanData['email'],
-                'password' => Hash::make('password'),
-                'role' => 'artisan',
-                'category' => $artisanData['category'],
-                'phone' => $artisanData['phone'],
-                'hourly_rate' => $artisanData['hourly_rate'],
-                'bio' => $artisanData['bio'],
-                'latitude' => $artisanData['latitude'],
-                'longitude' => $artisanData['longitude'],
-            ]);
+            User::firstOrCreate(
+                ['email' => $artisanData['email']],
+                [
+                    'name' => $artisanData['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'artisan',
+                    'category' => $artisanData['category'],
+                    'phone' => $artisanData['phone'],
+                    'hourly_rate' => $artisanData['hourly_rate'],
+                    'bio' => $artisanData['bio'],
+                    'latitude' => $artisanData['latitude'],
+                    'longitude' => $artisanData['longitude'],
+                ]
+            );
         }
     }
 }

@@ -23,9 +23,12 @@ class DatabaseSeeder extends Seeder
             ReviewSeeder::class,
         ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => '$2y$12$CfnITFm603BkFBJPGDCBIevV3xejesyBPcOnyWoM69ynMqaydD92m',
+            ]
+        );
     }
 }
