@@ -15,14 +15,14 @@ class AuthController extends Controller
             'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
             'phone' => 'nullable|string',
-            'password' => 'required|string|min:6',
+            'password' => 'nullable|string|min:6',
         ]);
 
         $user = User::create([
             'name' => $validated['full_name'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'password' => Hash::make($validated['password']),
+            'phone' => $validated['phone'] ?? null,
+            'password' => $request->filled('password') ? $validated['password'] : \Illuminate\Support\Str::random(32),
             'role' => 'client',
         ]);
 
@@ -40,7 +40,7 @@ class AuthController extends Controller
             'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
             'phone' => 'nullable|string',
-            'password' => 'required|string|min:6',
+            'password' => 'nullable|string|min:6',
             'skill_category' => 'required|string',
             'hourly_rate' => 'required|numeric',
             'bio' => 'nullable|string',
@@ -49,12 +49,12 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $validated['full_name'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'password' => Hash::make($validated['password']),
+            'phone' => $validated['phone'] ?? null,
+            'password' => $request->filled('password') ? $validated['password'] : \Illuminate\Support\Str::random(32),
             'role' => 'artisan',
             'category' => $validated['skill_category'],
             'hourly_rate' => $validated['hourly_rate'],
-            'bio' => $validated['bio'],
+            'bio' => $validated['bio'] ?? null,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
