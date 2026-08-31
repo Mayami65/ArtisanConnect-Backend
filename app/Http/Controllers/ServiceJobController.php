@@ -172,15 +172,39 @@ class ServiceJobController extends Controller
     public function updateStatus(Request $request, ServiceJob $serviceJob)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,in_progress,completed,cancelled',
+            'status' => 'required|in:pending,accepted,in_progress,completed,cancelled',
+            'assigned_artisan_id' => 'nullable|integer|exists:users,id',
         ]);
 
-        if ($request->user()->id !== $serviceJob->client_id) {
+        $user = $request->user();
+        $isClient = $user->id === $serviceJob->client_id;
+        $isAssignedArtisan = $serviceJob->applications()
+            ->where('artisan_id', $user->id)
+            ->where('status', 'accepted')
+            ->exists();
+
+        if (!$isClient && !$isAssignedArtisan) {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!empty($validated['assigned_artisan_id'])) {
+            $artisanId = $validated['assigned_artisan_id'];
+
+            $app = \App\Models\Application::firstOrCreate(
+                [
+                    'service_job_id' => $serviceJob->id,
+                    'artisan_id' => $artisanId,
+                ],
+                [
+                    'proposal' => 'Direct Hire',
+                    'status' => 'accepted',
+                ]
+            );
+            $app->update(['status' => 'accepted']);
         }
 
         $serviceJob->update(['status' => $validated['status']]);
 
-        return response()->json($serviceJob);
+        return response()->json($serviceJob->load('client', 'applications.artisan'));
     }
 }

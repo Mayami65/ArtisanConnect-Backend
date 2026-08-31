@@ -35,7 +35,7 @@ class UserProfileController extends Controller
             });
         } elseif ($user->role === 'client') {
             $user->load(['jobs' => function($query) {
-                $query->whereIn('status', ['pending', 'in_progress'])->latest()->take(10);
+                $query->whereIn('status', ['pending', 'accepted', 'in_progress'])->latest()->take(10);
             }]);
             
             $profile['jobsPosted'] = $user->jobs->map(function($job) {
