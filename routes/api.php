@@ -56,4 +56,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages/conversations', [ChatController::class, 'conversations']);
     Route::get('/messages/{user}', [ChatController::class, 'history']);
     Route::post('/messages/{user}', [ChatController::class, 'store']);
+
+    // Admin API Routes
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'metricsJson']);
+        Route::get('/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index']);
+        Route::post('/users/{user}/verify', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateVerification']);
+        Route::post('/users/{user}/toggle-active', [\App\Http\Controllers\Admin\AdminUserController::class, 'toggleActive']);
+        Route::get('/jobs', [\App\Http\Controllers\Admin\AdminJobController::class, 'index']);
+        Route::patch('/jobs/{serviceJob}/status', [\App\Http\Controllers\Admin\AdminJobController::class, 'updateStatus']);
+    });
 });

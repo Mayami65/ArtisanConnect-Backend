@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'phone', 'role', 'category', 'hourly_rate', 'bio', 'latitude', 'longitude'])]
+#[Fillable(['name', 'email', 'password', 'phone', 'role', 'is_verified', 'is_active', 'category', 'hourly_rate', 'bio', 'verification_notes', 'latitude', 'longitude'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,7 +28,45 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_verified' => 'boolean',
+            'is_active' => 'boolean',
+            'hourly_rate' => 'decimal:2',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isArtisan(): bool
+    {
+        return $this->role === 'artisan';
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === 'client';
+    }
+
+    public function scopeArtisans(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('role', 'artisan');
+    }
+
+    public function scopeClients(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('role', 'client');
+    }
+
+    public function scopeActive(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeUnverified(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('role', 'artisan')->where('is_verified', false);
     }
 
     public function jobs() {
